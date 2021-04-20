@@ -1,0 +1,29 @@
+{
+   "background": {
+      "persistent": true,
+      "scripts": [ "background.js" ]
+   },
+   "browser_action": {
+      "default_icon": "icon.png",
+      "default_popup": "options.html",
+      "default_title": "eyeCare - Protect your vision and health"
+   },
+   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+   "description": "Notifies you in multiple ways to take breaks and helps you with eye exercises based on 20-20-20 rule and with lower back exercises.",
+   "differential_fingerprint": "1.03d3bbd3a3a5bd62c1f7d397ca6b23a62c1edc6cc36a0c82f141ddce1906b85c",
+   "icons": {
+      "128": "icon_128.png",
+      "16": "icon_16.png",
+      "48": "icon_48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeAmgPO5Z8VH+q+zWIJy81o9Yoi6iZVOkC91Gy8P0kXNvh+cF82VNKabeZhZlYgdas3M/17Pz3DrhBU1Pc0WTnT4R2mGaTKOM4ilR2s7zaUAberaM49BEAH9+rHfiUq8BsGcJ9hocsTh+0ER1AhyuX7dPPKvBkE49HzaKJmH3CawIDAQAB",
+   "manifest_version": 2,
+   "minimum_chrome_version": "21.0.0.0",
+   "name": "eyeCare - Protect your vision",
+   "optional_permissions": [ "background" ],
+   "options_page": "options.html#optmode",
+   "permissions": [ "activeTab", "notifications", "storage" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "0.0.1.6",
+   "web_accessible_resources": [ "icon_48.png", "icon_128_noti.png" ]
+}
