@@ -62,8 +62,9 @@ def pre_notify(windows_balloon_tip):
 
 # mainloop
 def main():
-    bt = plyer.platforms.win.libs.balloontip(
+    bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
         title='Eye break reminders started',
+        message=f'Reminders every {interval} minutes',
         app_name=app_name,
         app_icon=str(icon_path)
     )
