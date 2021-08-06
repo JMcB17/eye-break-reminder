@@ -74,7 +74,7 @@ def main():
 
     while True:
         # count down if interval is appropriate, otherwise just wait
-        if type(interval) == int and interval > 1:
+        if isinstance(interval, int) and interval > 1:
             for i in range(interval, 0, -1):
                 if i == 1:
                     pre_notify(bt)
