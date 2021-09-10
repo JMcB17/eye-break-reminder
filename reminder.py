@@ -106,9 +106,11 @@ def resume_interval(
     current_timestamp = time.time()
     seconds_since_last = current_timestamp - last_timestamp
     if seconds_since_last < default * minute:
-        minutes_since_last = seconds_since_last // minute
-        print(f'Resuming with {minutes_since_last} minutes to go')
-        return minutes_since_last
+        minutes_since_last = int(seconds_since_last // minute)
+        interval_remaining = default - minutes_since_last
+        print(f'Resuming with {interval_remaining} minutes to go')
+        return interval_remaining
+    print('Not resuming')
     return default
 
 
