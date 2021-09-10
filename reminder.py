@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import time
 import webbrowser
 import winsound
@@ -14,15 +15,14 @@ import plyer.platforms.win.libs.balloontip
 # todo: uppercase constants
 
 # interval in minutes
-interval = 20
+reminder_interval = 20
 # Add 1 minute to accommodate for break time
-interval += 1
+reminder_interval += 1
 # length of a minute in seconds (for speedy debugging)
 minute = 60
 ##minute = 1
 
 folder_path = Path() / '0.0.1.6_0/'
-
 page_path = folder_path / 'unreads.html'
 snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
@@ -30,6 +30,8 @@ sound_path_wav = snds_folder / 'default.wav'
 sound_path = sound_path_wav
 ##icon = folder_path / 'icon_128_noti_XWm_icon.ico'
 icon_path = folder_path / 'eye_of_sauron_tnT_icon.ico'
+
+LAST_NOTIF_JSON_PATH = Path('last.json')
 
 app_name = 'Eye Break'
 WIN = sys.platform == 'win32'
@@ -71,22 +73,8 @@ def pre_notify(windows_balloon_tip=None):
     )
 
 
-# mainloop
-def main():
-    bt = None
-    if WIN:
-        bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
-            title='Eye break reminders started',
-            message=f'Reminders every {interval} minutes',
-            app_name=app_name,
-            app_icon=str(icon_path)
-        )
-    
-    if notify_at_startup:
-        notify(bt)
-
-    while True:
-        # count down if interval is appropriate, otherwise just wait
+def countdown(interval, bt=None):
+    # count down if interval is appropriate, otherwise just wait
         if isinstance(interval, int) and interval > 1:
             for i in range(interval, 0, -1):
                 if i == 1:
@@ -97,8 +85,55 @@ def main():
         else:
             time.sleep(interval*minute)
 
+
+def save_last(timestamp: float):
+    with open(LAST_NOTIF_JSON_PATH, 'w') as last_notif_file:
+        json.dump(timestamp, last_notif_file)
+
+
+def load_last(file: Path = LAST_NOTIF_JSON_PATH) -> float:
+    if not file.is_file():
+        return 0
+    
+    with open(file) as last_notif_file:
+        timestamp = json.load(last_notif_file)
+    print('Loaded last time reminder went off')
+    return timestamp
+
+
+def resume_interval(
+    last_timestamp: float, default: float = reminder_interval
+) -> float:
+    current_timestamp = time.time()
+    seconds_since_last = current_timestamp - last_timestamp
+    if seconds_since_last < default * minute:
+        minutes_since_last = seconds_since_last // minute
+        print(f'Resuming with {minutes_since_last} minutes to go')
+        return minutes_since_last
+    return default
+
+
+# mainloop
+def main():
+    bt = None
+    if WIN:
+        bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
+            title='Eye break reminders started',
+            message=f'Reminders every {reminder_interval} minutes',
+            app_name=app_name,
+            app_icon=str(icon_path)
+        )
+    
+    if notify_at_startup:
+        notify(bt)
+
+    coundown(resume_interval(load_last()))
+    while True:
         print('\nHave a break have a KitKat ®')
         notify(bt)
+        save_last(time.time())
+
+        coundown(reminder_interval)
 
 
 if __name__ == '__main__':
