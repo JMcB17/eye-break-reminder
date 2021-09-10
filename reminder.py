@@ -7,7 +7,6 @@ import winsound
 import sys
 from pathlib import Path
 
-import plyer.notification
 import plyer.platforms.win.libs.balloontip
 
 # todo: add UI for countdown etc.
@@ -75,15 +74,15 @@ def pre_notify(windows_balloon_tip=None):
 
 def countdown(interval, bt=None):
     # count down if interval is appropriate, otherwise just wait
-        if isinstance(interval, int) and interval > 1:
-            for i in range(interval, 0, -1):
-                if i == 1:
-                    pre_notify(bt)
+    if isinstance(interval, int) and interval > 1:
+        for i in range(interval, 0, -1):
+            if i == 1:
+                pre_notify(bt)
 
-                print(i, end=',', flush=True)
-                time.sleep(minute)
-        else:
-            time.sleep(interval*minute)
+            print(i, end=',', flush=True)
+            time.sleep(minute)
+    else:
+        time.sleep(interval*minute)
 
 
 def save_last(timestamp: float):
@@ -127,13 +126,13 @@ def main():
     if notify_at_startup:
         notify(bt)
 
-    coundown(resume_interval(load_last()))
+    countdown(resume_interval(load_last()))
     while True:
         print('\nHave a break have a KitKat ®')
         notify(bt)
         save_last(time.time())
 
-        coundown(reminder_interval)
+        countdown(reminder_interval)
 
 
 if __name__ == '__main__':
