@@ -3,8 +3,10 @@
 import time
 import webbrowser
 import winsound
+import sys
 from pathlib import Path
 
+import plyer.notification
 import plyer.platforms.win.libs.balloontip
 
 # todo: add UI for countdown etc.
@@ -30,18 +32,23 @@ sound_path = sound_path_wav
 icon_path = folder_path / 'eye_of_sauron_tnT_icon.ico'
 
 app_name = 'Eye Break'
+WIN = sys.platform == 'win32'
 
 # whether to popup the browser window
 autoraise = False
 notify_at_startup = False
 
 
-def notify(windows_balloon_tip):
+def notify(windows_balloon_tip=None):
     # open page
     webbrowser.open(str(page_path), autoraise=autoraise)
 
     # send windows notification
-    windows_balloon_tip.notify(
+    handler = plyer.notification
+    if WIN and windows_balloon_tip is not None:
+        handler = windows_balloon_tip
+
+    handler.notify(
         title='Take a break!',
         message='Blink your eyes, move them around, and look at a distant '
                 'object for 20 seconds.',
@@ -52,8 +59,12 @@ def notify(windows_balloon_tip):
     winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
 
 
-def pre_notify(windows_balloon_tip):
-    windows_balloon_tip.notify(
+def pre_notify(windows_balloon_tip=None):
+    handler = plyer.notification
+    if WIN and windows_balloon_tip is not None:
+        handler = windows_balloon_tip
+
+    handler.notify(
         title='Eye break in 1 minute',
         message='Take an eye break',
         app_name=app_name
@@ -62,12 +73,14 @@ def pre_notify(windows_balloon_tip):
 
 # mainloop
 def main():
-    bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
-        title='Eye break reminders started',
-        message=f'Reminders every {interval} minutes',
-        app_name=app_name,
-        app_icon=str(icon_path)
-    )
+    bt = None
+    if WIN:
+        bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
+            title='Eye break reminders started',
+            message=f'Reminders every {interval} minutes',
+            app_name=app_name,
+            app_icon=str(icon_path)
+        )
     
     if notify_at_startup:
         notify(bt)
