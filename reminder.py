@@ -4,11 +4,15 @@ import json
 import logging
 import time
 import webbrowser
-import winsound
 import sys
 from pathlib import Path
 
-import plyer.platforms.win.libs.balloontip
+WIN = sys.platform == 'win32'
+
+import plyer
+if WIN:
+    import plyer.platforms.win.libs.balloontip
+from playsound import playsound
 
 # todo: add UI for countdown etc.
 # todo: make the windows notification more like the one from the chrome extension?
@@ -34,7 +38,6 @@ icon_path = folder_path / 'eye_of_sauron_tnT_icon.ico'
 LAST_NOTIF_JSON_PATH = Path('last.json')
 
 app_name = 'Eye Break'
-WIN = sys.platform == 'win32'
 
 # whether to popup the browser window
 autoraise = False
@@ -44,7 +47,7 @@ notify_at_startup = False
 logging.basicConfig(
     filename='debug.log',
     format='%(asctime):'+logging.BASIC_FORMAT,
-    encoding='utf_8'
+##    encoding='utf_8'
 )
 
 
@@ -65,7 +68,7 @@ def notify(windows_balloon_tip=None):
     )
 
     # play sound
-    winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
+    playsound(str(sound_path))
 
 
 def pre_notify(windows_balloon_tip=None):
