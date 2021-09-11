@@ -50,7 +50,7 @@ notify_at_startup = False
 
 logging.basicConfig(
     filename=DEBUG_LOG_PATH,
-    format='%(asctime):'+logging.BASIC_FORMAT,
+    format='%(asctime)s:'+logging.BASIC_FORMAT,
 ##    encoding='utf_8'
 )
 
@@ -72,7 +72,14 @@ def notify(windows_balloon_tip=None):
     )
 
     # play sound
-    playsound(str(sound_path))
+    try:
+        playsound(str(sound_path.resolve()))
+    except ValueError as error:
+        raise ValueError(
+            'Error, try this:\nsudo apt install python3-gst-1.0'
+            '\nFrom https://github.com/TaylorSMarks/playsound/issues'
+            '/16#issuecomment-658182306'
+        ) from error
 
 
 def pre_notify(windows_balloon_tip=None):
@@ -107,6 +114,7 @@ def save_last(timestamp: float):
 
 def load_last(file: Path = LAST_NOTIF_JSON_PATH) -> float:
     if not file.is_file():
+        print("Didn't load last time reminder went off")
         return 0
     
     with open(file) as last_notif_file:
