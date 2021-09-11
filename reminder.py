@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import logging
 import time
 import webbrowser
 import winsound
@@ -38,6 +39,13 @@ WIN = sys.platform == 'win32'
 # whether to popup the browser window
 autoraise = False
 notify_at_startup = False
+
+
+logging.basicConfig(
+    filename='debug.log',
+    format='%(asctime):'+logging.BASIC_FORMAT,
+    encoding='utf_8'
+)
 
 
 def notify(windows_balloon_tip=None):
@@ -114,8 +122,7 @@ def resume_interval(
     return default
 
 
-# mainloop
-def main():
+def main_not_caught():
     bt = None
     if WIN:
         bt = plyer.platforms.win.libs.balloontip.WindowsBalloonTip(
@@ -135,6 +142,13 @@ def main():
         save_last(time.time())
 
         countdown(reminder_interval, bt=bt)
+
+
+def main():
+    try:
+        main_not_caught()
+    except Exception:
+        logging.exception('Exception caught!')
 
 
 if __name__ == '__main__':
