@@ -128,13 +128,13 @@ def main():
     if notify_at_startup:
         notify(bt)
 
-    countdown(resume_interval(load_last()))
+    countdown(resume_interval(load_last()), bt=bt)
     while True:
         print('\nHave a break have a KitKat ®')
         notify(bt)
         save_last(time.time())
 
-        countdown(reminder_interval)
+        countdown(reminder_interval, bt=bt)
 
 
 if __name__ == '__main__':
