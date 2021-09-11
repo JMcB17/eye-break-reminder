@@ -26,7 +26,9 @@ reminder_interval += 1
 minute = 60
 ##minute = 1
 
-folder_path = Path() / '0.0.1.6_0/'
+WORKDIR = Path(__file__).parent
+
+folder_path = WORKDIR / 'assets' / '0.0.1.6_0/'
 page_path = folder_path / 'unreads.html'
 snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
@@ -35,7 +37,9 @@ sound_path = sound_path_wav
 ##icon = folder_path / 'icon_128_noti_XWm_icon.ico'
 icon_path = folder_path / 'eye_of_sauron_tnT_icon.ico'
 
-LAST_NOTIF_JSON_PATH = Path('last.json')
+
+LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
+DEBUG_LOG_PATH = WORKDIR / 'debug.log'
 
 app_name = 'Eye Break'
 
@@ -45,7 +49,7 @@ notify_at_startup = False
 
 
 logging.basicConfig(
-    filename='debug.log',
+    filename=DEBUG_LOG_PATH,
     format='%(asctime):'+logging.BASIC_FORMAT,
 ##    encoding='utf_8'
 )
