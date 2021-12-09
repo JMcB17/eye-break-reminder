@@ -32,9 +32,9 @@ snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
 sound_path_wav = snds_folder / 'default.wav'
 sound_path = sound_path_wav
-icon = folder_path / 'icon_128_noti_XWm_icon.ico'
+icon_path = folder_path / 'icon_128_noti.ico'
 # :(
-##icon_patj = folder_path / 'eye_of_sauron_tnT_icon.ico'
+##icon_path = folder_path / 'eye_of_sauron.ico'
 
 
 LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
@@ -49,8 +49,8 @@ notify_at_startup = False
 
 logging.basicConfig(
     filename=DEBUG_LOG_PATH,
-    format='%(asctime)s:'+logging.BASIC_FORMAT,
-##    encoding='utf_8'
+    format='%(asctime)s:' + logging.BASIC_FORMAT,
+    encoding='utf-8'
 )
 
 
