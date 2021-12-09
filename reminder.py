@@ -32,9 +32,8 @@ snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
 sound_path_wav = snds_folder / 'default.wav'
 sound_path = sound_path_wav
-icon_path = folder_path / 'icon_128_noti.ico'
-# :(
-##icon_path = folder_path / 'eye_of_sauron.ico'
+# icon_path = folder_path / 'icon_128_noti.ico'
+icon_path = folder_path / 'eye_of_sauron.ico'
 
 
 LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
