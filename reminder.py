@@ -4,11 +4,15 @@ import json
 import logging
 import time
 import webbrowser
-import winsound
 import sys
 from pathlib import Path
 
-import plyer.platforms.win.libs.balloontip
+WIN = sys.platform == 'win32'
+
+import plyer
+if WIN:
+    import plyer.platforms.win.libs.balloontip
+from playsound import playsound
 
 # todo: add UI for countdown etc.
 # todo: make the windows notification more like the one from the chrome extension?
@@ -22,7 +26,9 @@ reminder_interval += 1
 minute = 60
 ##minute = 1
 
-folder_path = Path() / '0.0.1.6_0/'
+WORKDIR = Path(__file__).parent
+
+folder_path = WORKDIR / 'assets' / '0.0.1.6_0/'
 page_path = folder_path / 'unreads.html'
 snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
@@ -31,10 +37,11 @@ sound_path = sound_path_wav
 ##icon = folder_path / 'icon_128_noti_XWm_icon.ico'
 icon_path = folder_path / 'eye_of_sauron_tnT_icon.ico'
 
-LAST_NOTIF_JSON_PATH = Path('last.json')
+
+LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
+DEBUG_LOG_PATH = WORKDIR / 'debug.log'
 
 app_name = 'Eye Break'
-WIN = sys.platform == 'win32'
 
 # whether to popup the browser window
 autoraise = False
@@ -42,9 +49,9 @@ notify_at_startup = False
 
 
 logging.basicConfig(
-    filename='debug.log',
-    format='%(asctime):'+logging.BASIC_FORMAT,
-    encoding='utf_8'
+    filename=DEBUG_LOG_PATH,
+    format='%(asctime)s:'+logging.BASIC_FORMAT,
+##    encoding='utf_8'
 )
 
 
@@ -65,7 +72,14 @@ def notify(windows_balloon_tip=None):
     )
 
     # play sound
-    winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
+    try:
+        playsound(str(sound_path.resolve()))
+    except ValueError as error:
+        raise ValueError(
+            'Error, try this:\nsudo apt install python3-gst-1.0'
+            '\nFrom https://github.com/TaylorSMarks/playsound/issues'
+            '/16#issuecomment-658182306'
+        ) from error
 
 
 def pre_notify(windows_balloon_tip=None):
@@ -100,6 +114,7 @@ def save_last(timestamp: float):
 
 def load_last(file: Path = LAST_NOTIF_JSON_PATH) -> float:
     if not file.is_file():
+        print("Didn't load last time reminder went off")
         return 0
     
     with open(file) as last_notif_file:
