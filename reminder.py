@@ -29,8 +29,7 @@ WORKDIR = Path(__file__).parent
 folder_path = WORKDIR / 'assets/'
 page_path = folder_path / 'unreads.html'
 snds_folder = folder_path / 'snds/'
-sound_path_mp3 = snds_folder / 'default.mp3'
-sound_path = sound_path_wav
+sound_path = snds_folder / 'default.mp3'
 
 default_icon_path = folder_path / 'icon_128_noti.ico'
 custom_icon_path = folder_path / 'eye_of_sauron.ico'
@@ -46,11 +45,14 @@ autoraise = False
 notify_at_startup = False
 
 
-logging.basicConfig(
-    filename=DEBUG_LOG_PATH,
-    format='%(asctime)s:' + logging.BASIC_FORMAT,
-    encoding='utf-8'
-)
+formatter = logging.Formatter('%(asctime)s:' + logging.BASIC_FORMAT)
+file_handler = logging.FileHandler(DEBUG_LOG_PATH, encoding='utf-8')
+stream_handler = logging.StreamHandler()
+file_handler.setFormatter(formatter)
+stream_handler.setFormatter(formatter)
+log = logging.getLogger(__name__)
+log.addHandler(file_handler)
+log.addHandler(stream_handler)
 
 
 def notify(windows_balloon_tip=None):
@@ -150,7 +152,7 @@ def main_not_caught():
 
     countdown(resume_interval(load_last()), bt=bt)
     while True:
-        print('\nHave a break have a KitKat ®')
+        print('\nHave a break have a KitKat®')
         notify(bt)
         save_last(time.time())
 
@@ -161,7 +163,7 @@ def main():
     try:
         main_not_caught()
     except Exception:
-        logging.exception('Exception caught!')
+        log.exception('Exception caught!')
 
 
 if __name__ == '__main__':
