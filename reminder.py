@@ -26,15 +26,15 @@ minute = 60
 
 WORKDIR = Path(__file__).parent
 
-folder_path = WORKDIR / 'assets'
+folder_path = WORKDIR / 'assets/'
 page_path = folder_path / 'unreads.html'
 snds_folder = folder_path / 'snds/'
 sound_path_mp3 = snds_folder / 'default.mp3'
-sound_path_wav = snds_folder / 'default.wav'
 sound_path = sound_path_wav
-# icon_path = folder_path / 'icon_128_noti.ico'
-icon_path = folder_path / 'eye_of_sauron.ico'
 
+default_icon_path = folder_path / 'icon_128_noti.ico'
+custom_icon_path = folder_path / 'eye_of_sauron.ico'
+icon_path = custom_icon_path
 
 LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
 DEBUG_LOG_PATH = WORKDIR / 'debug.log'
@@ -71,7 +71,7 @@ def notify(windows_balloon_tip=None):
 
     # play sound
     try:
-        playsound(str(sound_path.resolve()))
+        playsound(str(sound_path.resolve()), block=False)
     except ValueError as error:
         raise ValueError(
             'Error, try this:\nsudo apt install python3-gst-1.0'
