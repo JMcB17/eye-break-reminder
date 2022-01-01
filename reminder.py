@@ -15,6 +15,7 @@ from playsound import playsound
 # todo: add UI for countdown etc.
 # todo: make the windows notification more like the one from the chrome extension?
 # todo: uppercase constants
+# todo: script to auto create shell:startup shortcut
 
 # interval in minutes
 reminder_interval = 20
