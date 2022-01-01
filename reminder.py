@@ -22,7 +22,7 @@ reminder_interval = 20
 # Add 1 minute to accommodate for break time
 reminder_interval += 1
 # length of a minute in seconds (for speedy debugging)
-minute = 1
+minute = 60
 ##minute = 1
 
 WORKDIR = Path(__file__).parent
