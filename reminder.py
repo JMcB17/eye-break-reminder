@@ -10,9 +10,6 @@ from plyer.platforms.win.libs.balloontip import WindowsBalloonTip
 from playsound import playsound
 
 
-# todo: script to auto create shell:startup shortcut
-
-
 # interval in minutes
 REMINDER_INTERVAL = 21
 # length of a minute in seconds (for speedy debugging)
