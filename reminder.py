@@ -6,12 +6,13 @@ import webbrowser
 from pathlib import Path
 
 import plyer
+# https://github.com/kivy/plyer/blob/master/plyer/platforms/win/libs/balloontip.py
 from plyer.platforms.win.libs.balloontip import WindowsBalloonTip
 from playsound import playsound
 
 
 # interval in minutes
-REMINDER_INTERVAL = 21
+REMINDER_INTERVAL = 20
 # length of a minute in seconds (for speedy debugging)
 MINUTE = 60
 
@@ -28,6 +29,7 @@ LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
 DEBUG_LOG_PATH = WORKDIR / 'debug.log'
 
 ASSETS_DIR = WORKDIR / 'assets/'
+HTML_PATH = ASSETS_DIR / 'unreads.html'
 ICON_PATH_DEFAULT = ASSETS_DIR / 'icon_128_noti.ico'
 ICON_PATH_CUSTOM = ASSETS_DIR / 'eye_of_sauron.ico'
 ICON_PATH = ICON_PATH_CUSTOM
@@ -47,14 +49,14 @@ log.addHandler(stream_handler)
 
 def notify(bt: WindowsBalloonTip):
     # open page
-    webbrowser.open(str(HTML_PATH), AUTORAISE=AUTORAISE)
+    webbrowser.open(str(HTML_PATH), autoraise=AUTORAISE)
     playsound(str(SOUND_PATH.resolve()), block=False)
 
     bt.notify(
         title='Take a break!',
         message='Blink your eyes, move them around, and look at a distant '
                 'object for 20 seconds.',
-        APP_NAME=APP_NAME
+        app_name=APP_NAME
     )
 
 
@@ -62,7 +64,7 @@ def pre_notify(bt: WindowsBalloonTip):
     bt.notify(
         title='Eye break in 1 minute',
         message='Take an eye break',
-        APP_NAME=APP_NAME
+        app_name=APP_NAME
     )
 
 
@@ -97,9 +99,9 @@ def resume_interval(
     current_timestamp = time.time()
     seconds_since_last = current_timestamp - last_timestamp
     if seconds_since_last < default * MINUTE:
-        MINUTEs_since_last = int(seconds_since_last // MINUTE)
-        interval_remaining = default - MINUTEs_since_last
-        print(f'Resuming with {interval_remaining} MINUTEs to go')
+        minutes_since_last = int(seconds_since_last // MINUTE)
+        interval_remaining = default - minutes_since_last
+        print(f'Resuming with {interval_remaining} minutes to go')
         return interval_remaining
     print('Not resuming')
     return default
@@ -108,9 +110,10 @@ def resume_interval(
 def main_not_caught():
     bt = WindowsBalloonTip(
         title='Eye break reminders started',
-        message=f'Reminders every {REMINDER_INTERVAL} MINUTEs',
-        APP_NAME=APP_NAME,
-        app_icon=str(ICON_PATH)
+        message=f'Reminders every {REMINDER_INTERVAL} minutes',
+        app_name=APP_NAME,
+        app_icon=str(ICON_PATH),
+        timeout=0
     )
     
     if STARTUP_NOTIFY:
