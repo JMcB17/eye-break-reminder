@@ -9,38 +9,33 @@ import plyer
 from plyer.platforms.win.libs.balloontip import WindowsBalloonTip
 from playsound import playsound
 
-# todo: add UI for countdown etc.
-# todo: make the windows notification more like the one from the chrome extension?
-# todo: uppercase constants
+
 # todo: script to auto create shell:startup shortcut
 
+
 # interval in minutes
-reminder_interval = 20
-# Add 1 minute to accommodate for break time
-reminder_interval += 1
+REMINDER_INTERVAL = 21
 # length of a minute in seconds (for speedy debugging)
-minute = 60
-##minute = 1
+MINUTE = 60
+
+APP_NAME = 'Eye Break'
+
+# whether to popup the browser window
+AUTORAISE = False
+STARTUP_NOTIFY = False
+
 
 WORKDIR = Path(__file__).parent
-
-folder_path = WORKDIR / 'assets/'
-page_path = folder_path / 'unreads.html'
-snds_folder = folder_path / 'snds/'
-sound_path = snds_folder / 'default.mp3'
-
-default_icon_path = folder_path / 'icon_128_noti.ico'
-custom_icon_path = folder_path / 'eye_of_sauron.ico'
-icon_path = custom_icon_path
 
 LAST_NOTIF_JSON_PATH = WORKDIR / 'last.json'
 DEBUG_LOG_PATH = WORKDIR / 'debug.log'
 
-app_name = 'Eye Break'
-
-# whether to popup the browser window
-autoraise = False
-notify_at_startup = False
+ASSETS_DIR = WORKDIR / 'assets/'
+ICON_PATH_DEFAULT = ASSETS_DIR / 'icon_128_noti.ico'
+ICON_PATH_CUSTOM = ASSETS_DIR / 'eye_of_sauron.ico'
+ICON_PATH = ICON_PATH_CUSTOM
+SNDS_DIR = ASSETS_DIR / 'snds/'
+SOUND_PATH = SNDS_DIR / 'default.mp3'
 
 
 formatter = logging.Formatter('%(asctime)s:' + logging.BASIC_FORMAT)
@@ -55,14 +50,14 @@ log.addHandler(stream_handler)
 
 def notify(bt: WindowsBalloonTip):
     # open page
-    webbrowser.open(str(page_path), autoraise=autoraise)
-    playsound(str(sound_path.resolve()), block=False)
+    webbrowser.open(str(HTML_PATH), AUTORAISE=AUTORAISE)
+    playsound(str(SOUND_PATH.resolve()), block=False)
 
     bt.notify(
         title='Take a break!',
         message='Blink your eyes, move them around, and look at a distant '
                 'object for 20 seconds.',
-        app_name=app_name
+        APP_NAME=APP_NAME
     )
 
 
@@ -70,21 +65,17 @@ def pre_notify(bt: WindowsBalloonTip):
     bt.notify(
         title='Eye break in 1 minute',
         message='Take an eye break',
-        app_name=app_name
+        APP_NAME=APP_NAME
     )
 
 
-def countdown(interval, bt: WindowsBalloonTip):
-    # count down if interval is appropriate, otherwise just wait
-    if isinstance(interval, int) and interval > 1:
-        for i in range(interval, 0, -1):
-            if i == 1:
-                pre_notify(bt)
+def countdown(interval: int, bt: WindowsBalloonTip):
+    for i in range(interval, 0, -1):
+        if i == 1:
+            pre_notify(bt)
 
-            print(i, end=',', flush=True)
-            time.sleep(minute)
-    else:
-        time.sleep(interval*minute)
+        print(i, end=',', flush=True)
+        time.sleep(MINUTE)
 
 
 def save_last(timestamp: float):
@@ -104,14 +95,14 @@ def load_last(file: Path = LAST_NOTIF_JSON_PATH) -> float:
 
 
 def resume_interval(
-    last_timestamp: float, default: float = reminder_interval
+    last_timestamp: float, default: float = REMINDER_INTERVAL
 ) -> float:
     current_timestamp = time.time()
     seconds_since_last = current_timestamp - last_timestamp
-    if seconds_since_last < default * minute:
-        minutes_since_last = int(seconds_since_last // minute)
-        interval_remaining = default - minutes_since_last
-        print(f'Resuming with {interval_remaining} minutes to go')
+    if seconds_since_last < default * MINUTE:
+        MINUTEs_since_last = int(seconds_since_last // MINUTE)
+        interval_remaining = default - MINUTEs_since_last
+        print(f'Resuming with {interval_remaining} MINUTEs to go')
         return interval_remaining
     print('Not resuming')
     return default
@@ -120,12 +111,12 @@ def resume_interval(
 def main_not_caught():
     bt = WindowsBalloonTip(
         title='Eye break reminders started',
-        message=f'Reminders every {reminder_interval} minutes',
-        app_name=app_name,
-        app_icon=str(icon_path)
+        message=f'Reminders every {REMINDER_INTERVAL} MINUTEs',
+        APP_NAME=APP_NAME,
+        app_icon=str(ICON_PATH)
     )
     
-    if notify_at_startup:
+    if STARTUP_NOTIFY:
         notify(bt)
 
     countdown(resume_interval(load_last()), bt=bt)
@@ -134,14 +125,16 @@ def main_not_caught():
         notify(bt)
         save_last(time.time())
 
-        countdown(reminder_interval, bt=bt)
+        countdown(REMINDER_INTERVAL, bt=bt)
 
 
 def main():
-    try:
-        main_not_caught()
-    except Exception:
-        log.exception('Exception caught!')
+    while True:
+        try:
+            main_not_caught()
+        except Exception:
+            log.exception('Exception caught!')
+            time.sleep(60)
 
 
 if __name__ == '__main__':
