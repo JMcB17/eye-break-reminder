@@ -49,7 +49,8 @@ log.addHandler(stream_handler)
 
 def notify(bt: WindowsBalloonTip):
     # open page
-    webbrowser.open(str(HTML_PATH), autoraise=AUTORAISE)
+    if AUTORAISE:
+        webbrowser.open(str(HTML_PATH), autoraise=AUTORAISE)
     playsound(str(SOUND_PATH.resolve()), block=False)
 
     bt.notify(
